@@ -1,0 +1,23 @@
+#!/usr/bin/php
+<?php
+
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+    // 要不要保存错误信息
+    // var_dump($error);
+    // var_dump($errstr);
+    // var_dump($errfile);
+    // var_dump($errline);
+});
+spl_autoload_extensions(".php");
+spl_autoload_register(function ($class) {
+    $name = strstr($class, '\\', true);
+    if (in_array($name, array('', 'Task', 'Logger', 'Scheduler'))) {
+        $filename = __DIR__ .DIRECTORY_SEPARATOR. str_replace('\\', '/', $class) . ".php";
+        if (is_file($filename)) {
+            include $filename;
+        }
+    }
+});
+define('PHP_TASK_ROOT', __DIR__);
+// 自己的任务脚本写在这里
+require PHP_TASK_ROOT.DIRECTORY_SEPARATOR.'Script.php';
